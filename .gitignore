@@ -1,0 +1,58 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Editores/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Variables de entorno (Next.js)
+.env
+.env*.local
+
+# Dependencias y builds (Next.js / Node)
+node_modules/
+.next/
+.next.cache/
+dist/
+build/
+out/
+.turbo/
+.cache/
+.eslintcache
+.stylelintcache
+coverage/
+jest-cache/
+jest-coverage/
+*.tsbuildinfo
+
+# E2E (si se usan)
+playwright-report/
+test-results/
+.cypress/
+cypress/screenshots/
+cypress/videos/
+
+# Storybook (si lo añades)
+.storybook-out/
+storybook-static/
+
+# Radix/ShadCN (referencia)
+.radix/
+
+# Directorios temporales vistos en tu raíz
+.idx/
