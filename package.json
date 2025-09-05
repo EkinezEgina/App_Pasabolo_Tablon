@@ -3,11 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run prebuild && next dev --turbopack -p 9002",
+    "dev": "next dev --turbopack -p 9002",
     "genkit:dev": "echo 'Genkit dev server not needed for self-contained app'",
     "genkit:watch": "echo 'Genkit dev server not needed for self-contained app'",
-    "prebuild": "node ./scripts/bundle-project-files.mjs",
-    "build": "npm run prebuild && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
