@@ -180,22 +180,32 @@ function tournamentReducer(state: TournamentState, action: Action): TournamentSt
       const currentPhaseIndex = phaseOrder.indexOf(phase);
       
       if (phase === 'final') {
-           const finalScores = rounds.final;
-           const winnerScore = [...finalScores].sort((a,b) => b.accumulatedTotal - a.accumulatedTotal)[0];
-           const winner = originalParticipants.find(p => p.id === winnerScore.participantId);
-           const finishedState = { ...state, phase: "finished" as const, winner: winner || null, finishedAt: new Date().toISOString() };
-           
-           if (typeof window !== 'undefined') {
-              const newHistoryItemId = `${new Date().getTime()}-${originalParticipants[0]?.id || 0}`;
-              if (!history.some(item => item.id === newHistoryItemId)) {
-                const newHistoryItem: TournamentHistoryItem = {id: newHistoryItemId, state: finishedState};
-                const newHistory = [newHistoryItem, ...history];
-                localStorage.setItem('pasaboloTournamentHistory', JSON.stringify(newHistory.slice(0, 20))); // Keep last 20
-                return { ...initialState, history: newHistory };
-              }
-           }
-           
-           return { ...state, phase: "finished", viewedPhase: "finished", winner: winner || null, currentPlayerId: null };
+        const finalScores = rounds.final;
+        const winnerScore = [...finalScores].sort((a,b) => b.accumulatedTotal - a.accumulatedTotal)[0];
+        const winner = originalParticipants.find(p => p.id === winnerScore.participantId);
+    
+    // 1. Creamos el estado final completo, tal como queremos que se guarde.
+        const finishedState = { ...state, phase: "finished" as const, winner: winner || null, finishedAt: new Date().toISOString() };
+    
+      if (typeof window !== 'undefined') {
+        const newHistoryItemId = `${new Date().getTime()}-${originalParticipants[0]?.id || 0}`;
+        
+    // 2. Prevenimos duplicados en el historial, una capa extra de seguridad.
+      if (!history.some(item => item.id === newHistoryItemId)) {
+        const newHistoryItem: TournamentHistoryItem = {id: newHistoryItemId, state: finishedState};
+        const newHistory = [newHistoryItem, ...history];
+            
+    // 3. Guardamos el historial actualizado.
+        localStorage.setItem('pasaboloTournamentHistory', JSON.stringify(newHistory.slice(0, 20)));
+      }
+
+    // 4. (LA CLAVE) Eliminamos el torneo en curso. ¡Adiós al bucle!
+        localStorage.removeItem('pasaboloTournamentState');
+      }
+    
+    // 5. Devolvemos el estado de "ganador" para que la interfaz muestre la pantalla correcta.
+    //    Además, mantenemos el historial que acabamos de actualizar.
+      return { ...initialState, phase: "finished", winner: winner || null, history: state.history };
       }
       
       if (currentPhaseIndex === -1 || currentPhaseIndex >= phaseOrder.length - 2) {
