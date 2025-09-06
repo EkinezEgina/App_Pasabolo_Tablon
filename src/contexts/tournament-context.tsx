@@ -186,15 +186,19 @@ function tournamentReducer(state: TournamentState, action: Action): TournamentSt
     
     // 1. Creamos el estado final completo, tal como queremos que se guarde.
         const finishedState = { ...state, phase: "finished" as const, winner: winner || null, finishedAt: new Date().toISOString() };
-    
+    // Agregamos al historial.
+        let newHistory = history;
+        
       if (typeof window !== 'undefined') {
         const newHistoryItemId = `${new Date().getTime()}-${originalParticipants[0]?.id || 0}`;
         
     // 2. Prevenimos duplicados en el historial, una capa extra de seguridad.
       if (!history.some(item => item.id === newHistoryItemId)) {
         const newHistoryItem: TournamentHistoryItem = {id: newHistoryItemId, state: finishedState};
-        const newHistory = [newHistoryItem, ...history];
-            
+        // const newHistory = [newHistoryItem, ...history];
+        newHistory = [newHistoryItem, ...history];
+
+        
     // 3. Guardamos el historial actualizado.
         localStorage.setItem('pasaboloTournamentHistory', JSON.stringify(newHistory.slice(0, 20)));
       }
@@ -205,7 +209,8 @@ function tournamentReducer(state: TournamentState, action: Action): TournamentSt
     
     // 5. Devolvemos el estado de "ganador" para que la interfaz muestre la pantalla correcta.
     //    Además, mantenemos el historial que acabamos de actualizar.
-      return { ...initialState, phase: "finished", winner: winner || null, history: state.history };
+      // return { ...initialState, phase: "finished", winner: winner || null, history: state.history };
+      return { ...initialState, phase: "finished", winner: winner || null, history: newHistory };  
       }
       
       if (currentPhaseIndex === -1 || currentPhaseIndex >= phaseOrder.length - 2) {
